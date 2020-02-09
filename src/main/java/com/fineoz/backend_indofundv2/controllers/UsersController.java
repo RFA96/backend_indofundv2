@@ -4,6 +4,7 @@ import com.fineoz.backend_indofundv2.exceptions.ResourceNotFoundException;
 import com.fineoz.backend_indofundv2.models.Users;
 import com.fineoz.backend_indofundv2.repositories.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +65,6 @@ public class UsersController
                 .orElseThrow(() -> new ResourceNotFoundException("Users", "id_user", id_user));
         usersRepository.delete(users);
 
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<Users>(HttpStatus.NO_CONTENT);
     }
 }
