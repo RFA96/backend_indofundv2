@@ -29,7 +29,6 @@ public class Users implements Serializable
     @NotBlank
     private String password;
 
-    @NotBlank
     private String api_key;
 
     @NotBlank

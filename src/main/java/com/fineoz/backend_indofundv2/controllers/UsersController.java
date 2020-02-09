@@ -9,6 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -37,6 +42,31 @@ public class UsersController
     @PostMapping("/users")
     public Users createUser(@Valid @RequestBody Users users)
     {
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(users.getPassword().getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder sb = new StringBuilder();
+            for(byte b : messageDigest)
+            {
+                sb.append(String.format("%02x", b));
+            }
+            users.setApi_key(sb.toString());
+
+            //Set expired date
+            Date currentDate = new Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(currentDate);
+            c.add(Calendar.YEAR, 1);
+            Date currentDatePlusOne = c.getTime();
+            users.setExpired_on(currentDatePlusOne);
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         return usersRepository.save(users);
     }
 
